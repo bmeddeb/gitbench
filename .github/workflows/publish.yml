@@ -1,0 +1,126 @@
+name: Build and Publish to PyPI
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        include:
+          - os: ubuntu-latest
+            target: x86_64
+          - os: windows-latest
+            target: x64
+          - os: macos-latest
+            target: universal2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-apple-darwin, aarch64-apple-darwin
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install maturin==1.4.0 build twine
+          maturin --version
+          
+      - name: Environment Info
+        run: |
+          python --version
+          rustc --version
+          cargo --version
+          uname -a || echo "uname not available"
+          rustup show || echo "rustup show not available"
+
+      - name: Build wheels for macOS
+        if: runner.os == 'macOS'
+        run: |
+          echo "Building for macOS with universal2 target"
+          rustup target add x86_64-apple-darwin aarch64-apple-darwin
+          rustup show
+          # Use universal2 build approach from maturin docs
+          RUSTFLAGS="-C link-arg=-undefined -C link-arg=dynamic_lookup" maturin build --release --strip --universal2 --out dist || \
+          RUSTFLAGS="-C link-arg=-undefined -C link-arg=dynamic_lookup" maturin build --release --strip --out dist
+        env:
+          MACOSX_DEPLOYMENT_TARGET: '10.12'
+
+      - name: Build wheels for Linux
+        if: runner.os == 'Linux'
+        run: |
+          echo "Building for Linux"
+          maturin build --release --strip --out dist
+
+      - name: Build wheels for Windows
+        if: runner.os == 'Windows'
+        run: |
+          echo "Building for Windows"
+          # For Windows builds
+          maturin build --release --strip --out dist
+
+      - name: Build source distribution
+        if: runner.os == 'Linux' && matrix.python-version == '3.10'
+        run: |
+          echo "Building source distribution"
+          python -m build --sdist
+          ls -la dist/
+
+      - name: Upload wheels as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}-${{ matrix.python-version }}
+          path: dist/*.whl
+
+      - name: Check Distribution Files (Unix)
+        if: runner.os != 'Windows' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        run: |
+          echo "Checking distribution files"
+          ls -la dist/
+          echo "Validating with twine check"
+          twine check dist/*
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Check Distribution Files (Windows)
+        if: runner.os == 'Windows' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        run: |
+          echo "Checking distribution files"
+          dir dist
+          echo "Validating with twine check"
+          twine check dist/*
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+
+      - name: Debug Publish Condition
+        run: |
+          echo "Event Name: ${{ github.event_name }}"
+          echo "GitHub Reference: ${{ github.ref }}"
+          echo "Condition being evaluated: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')"
+
+      - name: Publish to PyPI
+        if: (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) || github.event_name == 'workflow_dispatch'
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          echo "Uploading to PyPI"
+          twine upload dist/*

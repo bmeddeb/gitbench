@@ -1,0 +1,116 @@
+name: Deploy MkDocs to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        run: |
+          # Actions run in the workspace (repo) directory by default
+          echo "Current directory: $PWD"
+          
+          # In a self-hosted runner, we need to manually pull the code
+          REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
+          
+          # If we're not in the repo directory already, get the code
+          if [ ! -d ".git" ]; then
+            echo "Initializing git repository"
+            git init
+            git remote add origin $REPO_URL
+          fi
+          
+          # Fetch the code
+          git fetch origin "$GITHUB_REF"
+          
+          # Checkout the specific ref that triggered the workflow
+          git checkout -f "$GITHUB_SHA"
+          
+          echo "Repository checked out at $(git rev-parse HEAD)"
+
+      - name: Setup Python
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3.12 python3.12-dev python3.12-venv python3-pip
+          python3.12 -m pip install --upgrade pip
+
+      - name: Cache pip
+        run: |
+          # Simple cache functionality
+          CACHE_DIR="/tmp/pip-cache"
+          CACHE_KEY="${{ runner.os }}-pip-docs-${{ hashFiles('**/mkdocs.yml') }}"
+          
+          mkdir -p "$CACHE_DIR/$CACHE_KEY"
+          mkdir -p ~/.cache/pip
+          if [ -d "$CACHE_DIR/$CACHE_KEY" ]; then
+            echo "Cache found, restoring from $CACHE_DIR/$CACHE_KEY"
+            cp -R "$CACHE_DIR/$CACHE_KEY"/* ~/.cache/pip/ || true
+          fi
+
+      - name: Install documentation dependencies
+        run: |
+          pip install mkdocs mkdocs-material mkdocs-awesome-pages-plugin mkdocs-git-revision-date-localized-plugin mkdocs-minify-plugin
+
+      - name: Build docs
+        run: mkdocs build
+
+      - name: Deploy to gh-pages/docs
+        run: |
+          # Setup git user
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # Check if site directory exists
+          if [ ! -d "./site" ]; then
+            echo "Site directory does not exist: ./site"
+            exit 1
+          fi
+          
+          # Create a temporary directory for the gh-pages branch
+          TEMP_DIR=$(mktemp -d)
+          
+          # Clone the repository with the gh-pages branch
+          REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git"
+          
+          echo "Cloning repository..."
+          git clone --branch gh-pages $REPO_URL $TEMP_DIR || git clone $REPO_URL $TEMP_DIR
+          
+          cd $TEMP_DIR
+          
+          # Create or switch to the target branch
+          if ! git rev-parse --verify gh-pages >/dev/null 2>&1; then
+            echo "Creating branch gh-pages"
+            git checkout -b gh-pages
+          else
+            echo "Switching to branch gh-pages"
+            git checkout gh-pages
+          fi
+          
+          # Ensure docs directory exists
+          mkdir -p docs
+          
+          # Keep existing files
+          echo "Keeping existing files"
+          
+          # Copy contents of site directory to docs
+          echo "Copying files from site to docs"
+          cp -r $GITHUB_WORKSPACE/site/* docs/
+          
+          # Add, commit and push
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Deploy to GitHub Pages"
+            
+            # Push changes
+            echo "Pushing changes to gh-pages"
+            git push origin gh-pages
+          fi
+          
+          echo "Deployment complete"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,90 @@
+name: 'Deploy to GitHub Pages'
+description: 'Deploy content to GitHub Pages'
+inputs:
+  github_token:
+    description: 'GitHub token for authentication'
+    required: true
+  publish_branch:
+    description: 'Branch to publish to'
+    required: true
+    default: 'gh-pages'
+  publish_dir:
+    description: 'Directory to publish'
+    required: true
+  destination_dir:
+    description: 'Directory to publish to in the target branch'
+    required: false
+  keep_files:
+    description: 'Keep existing files in the publish branch'
+    required: false
+    default: 'false'
+runs:
+  using: 'composite'
+  steps:
+    - name: Deploy to GitHub Pages
+      shell: bash
+      run: |
+        # This is a simplified version that pushes content to GitHub Pages
+        echo "Deploying to GitHub Pages"
+        
+        # Setup git user
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        
+        # Check if publish directory exists
+        if [ ! -d "${{ inputs.publish_dir }}" ]; then
+          echo "Publish directory does not exist: ${{ inputs.publish_dir }}"
+          exit 1
+        fi
+        
+        # Create a temporary directory for the gh-pages branch
+        TEMP_DIR=$(mktemp -d)
+        
+        # Clone the repository with the gh-pages branch
+        REPO_URL="https://x-access-token:${{ inputs.github_token }}@github.com/${GITHUB_REPOSITORY}.git"
+        
+        echo "Cloning repository..."
+        git clone --branch ${{ inputs.publish_branch }} $REPO_URL $TEMP_DIR || git clone $REPO_URL $TEMP_DIR
+        
+        cd $TEMP_DIR
+        
+        # Create or switch to the target branch
+        if ! git rev-parse --verify ${{ inputs.publish_branch }} >/dev/null 2>&1; then
+          echo "Creating branch ${{ inputs.publish_branch }}"
+          git checkout -b ${{ inputs.publish_branch }}
+        else
+          echo "Switching to branch ${{ inputs.publish_branch }}"
+          git checkout ${{ inputs.publish_branch }}
+        fi
+        
+        # Determine destination directory
+        DEST_DIR="."
+        if [ -n "${{ inputs.destination_dir }}" ]; then
+          DEST_DIR="${{ inputs.destination_dir }}"
+          mkdir -p "$DEST_DIR"
+        fi
+        
+        # Remove existing files if not keeping them
+        if [ "${{ inputs.keep_files }}" != "true" ]; then
+          echo "Removing existing files in $DEST_DIR"
+          # Avoid removing .git directory
+          find "$DEST_DIR" -mindepth 1 -maxdepth 1 -not -path "*/.git*" -exec rm -rf {} \;
+        fi
+        
+        # Copy contents of publish_dir to the destination
+        echo "Copying files from ${{ inputs.publish_dir }} to $DEST_DIR"
+        cp -r $GITHUB_WORKSPACE/${{ inputs.publish_dir }}/* $DEST_DIR/
+        
+        # Commit changes
+        git add -A
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Deploy to GitHub Pages"
+          
+          # Push changes
+          echo "Pushing changes to ${{ inputs.publish_branch }}"
+          git push origin ${{ inputs.publish_branch }}
+        fi
+        
+        echo "Deployment complete"

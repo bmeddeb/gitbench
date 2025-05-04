@@ -1,0 +1,18 @@
+# Core dependencies
+httpx>=0.24.0
+
+# Optional dependencies (for full functionality)
+pandas>=2.0.0  # For data analysis features
+cryptography>=44.0.2  # For secure token encryption
+pydantic>=2.0.0  # For model validation (future use)
+
+# Development dependencies
+maturin>=1.8.3
+pytest>=6.0.0
+black>=22.1.0
+isort>=5.10.1
+
+# To install all dependencies
+# pip install -e ".[all]"
+# To install only development dependencies
+# pip install -e ".[dev]"

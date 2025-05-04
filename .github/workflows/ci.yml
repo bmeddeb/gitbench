@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # Custom checkout implementation
+      - name: Checkout repository
+        run: |
+          # Actions run in the workspace (repo) directory by default
+          echo "Current directory: $PWD"
+          
+          # In a self-hosted runner, we need to manually pull the code
+          # GitHub sets these environment variables automatically
+          REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
+          
+          # If we're not in the repo directory already, get the code
+          if [ ! -d ".git" ]; then
+            echo "Initializing git repository"
+            git init
+            git remote add origin $REPO_URL
+          fi
+          
+          # Fetch the code
+          git fetch origin "$GITHUB_REF"
+          
+          # Checkout the specific ref that triggered the workflow
+          git checkout -f "$GITHUB_SHA"
+          
+          echo "Repository checked out at $(git rev-parse HEAD)"
+
+      # Now we can use our custom actions
+      - name: Setup Python
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3.12 python3.12-dev python3.12-venv python3-pip
+          python3.12 -m pip install --upgrade pip
+
+      - name: Setup Rust
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          source "$HOME/.cargo/env"
+          rustup default stable
+
+      - name: Cache pip
+        run: |
+          # Simple cache functionality
+          CACHE_DIR="/tmp/pip-cache"
+          CACHE_KEY="${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}"
+          
+          mkdir -p "$CACHE_DIR/$CACHE_KEY"
+          if [ -d "$CACHE_DIR/$CACHE_KEY" ]; then
+            echo "Cache found, restoring from $CACHE_DIR/$CACHE_KEY"
+            cp -R "$CACHE_DIR/$CACHE_KEY"/* ~/.cache/pip/ || true
+          fi
+
+      - name: Set up environment
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install maturin pytest pydantic>=2.0.0
+          pip install -e ".[dev,pydantic]"
+
+      - name: Build Rust extension with maturin
+        run: |
+          source .venv/bin/activate
+          maturin develop
+
+      - name: Run tests
+        run: |
+          source .venv/bin/activate
+          pytest tests/

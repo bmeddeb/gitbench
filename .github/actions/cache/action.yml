@@ -1,0 +1,53 @@
+name: 'Cache'
+description: 'Cache dependencies to speed up workflows'
+inputs:
+  path:
+    description: 'Path to cache'
+    required: true
+  key:
+    description: 'Cache key'
+    required: true
+  restore-keys:
+    description: 'Restore keys if key is not found'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache ${{ inputs.path }}
+      shell: bash
+      run: |
+        # Very simplified cache implementation
+        CACHE_DIR="/tmp/github-cache/${{ inputs.key }}"
+        
+        # Check if cache exists
+        if [ -d "$CACHE_DIR" ]; then
+          echo "Cache found, restoring from $CACHE_DIR to ${{ inputs.path }}"
+          mkdir -p $(dirname "${{ inputs.path }}")
+          cp -R "$CACHE_DIR"/* "${{ inputs.path }}" || true
+        else
+          # Try restore keys if provided
+          RESTORE_FOUND=false
+          
+          if [ -n "${{ inputs.restore-keys }}" ]; then
+            echo "Cache key not found, trying restore keys"
+            for key in ${{ inputs.restore-keys }}; do
+              RESTORE_DIR="/tmp/github-cache/$key"
+              if [ -d "$RESTORE_DIR" ]; then
+                echo "Restore key found, restoring from $RESTORE_DIR"
+                mkdir -p $(dirname "${{ inputs.path }}")
+                cp -R "$RESTORE_DIR"/* "${{ inputs.path }}" || true
+                RESTORE_FOUND=true
+                break
+              fi
+            done
+          fi
+          
+          if [ "$RESTORE_FOUND" = false ]; then
+            echo "No cache found for key or restore keys"
+          fi
+        fi
+        
+        # Save the cache (would be done post-job in a real implementation)
+        mkdir -p "$CACHE_DIR"
+        cp -R "${{ inputs.path }}"/* "$CACHE_DIR" || true
+        echo "Cache saved to $CACHE_DIR"

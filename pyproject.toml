@@ -1,0 +1,69 @@
+[build-system]
+requires = ["maturin>=0.13,<2"]
+build-backend = "maturin"
+
+[project]
+name = "gitbench"
+version = "0.1.0"
+description = "gitbench is a high-performance Python library (powered by Rust) for managing and analyzing Git repositories in bulk. It supports asynchronous cloning, parallel git blame and commit analysis using Rayon, and integrates with GitHub, GitLab, and BitBucket APIs. Designed for large-scale repository analysis, gitbench handles API token rotation, monitors rate limits, and provides detailed progress tracking across operations."
+authors = [
+    {name = "Ben", email = "bmeddeb@asu.edu"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "flask>=3.1.0",
+    "httpx>=0.24.0", # Required for API clients
+    "pytest-asyncio>=0.26.0",
+    "quart>=0.20.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Rust",
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Version Control :: Git",
+]
+
+[project.optional-dependencies]
+crypto = [
+    "cryptography>=44.0.2",  # For secure token encryption
+]
+pandas = [
+    "pandas>=2.0.0",  # For data analysis
+]
+pydantic = [
+    "pydantic>=2.0.0",  # For model validation and serialization
+]
+dev = [
+    "black>=22.1.0",
+    "isort>=5.10.1",
+    "pytest>=6.0.0",
+    "maturin>=1.8.3",
+]
+examples = [
+    "pandas>=2.0.0",
+    "cryptography>=44.0.2",
+]
+all = [
+    "cryptography>=44.0.2",
+    "pandas>=2.0.0",
+    "pydantic>=2.0.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/bmeddeb/gitbench"
+"Bug Tracker" = "https://github.com/bmeddeb/gitbench/issues"
+
+[tool.maturin]
+bindings      = "pyo3"
+python-source = "."            # look in the project root
+python-packages = ["gitbench"] # include gitbench as a package
+module-name   = "gitbench"     # name of the Rust extension
+manifest-path = "./Cargo.toml"
+features      = ["pyo3/extension-module"]
+

@@ -1,0 +1,24 @@
+name: 'Checkout'
+description: 'Checkout repository content'
+inputs:
+  fetch-depth:
+    description: 'Number of commits to fetch'
+    required: false
+    default: '1'
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout repository
+      shell: bash
+      run: |
+        # Clone the repository (a simplified version)
+        if [ -d "$GITHUB_WORKSPACE" ]; then
+          cd $GITHUB_WORKSPACE
+          # Fetch with the specified depth
+          git fetch --depth=${{ inputs.fetch-depth }}
+          git checkout $GITHUB_SHA
+          echo "Repository checked out successfully at $(git rev-parse HEAD)"
+        else
+          echo "GITHUB_WORKSPACE directory does not exist"
+          exit 1
+        fi

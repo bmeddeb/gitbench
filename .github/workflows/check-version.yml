@@ -1,0 +1,255 @@
+name: Check Version and Release
+
+
+on:
+   push:
+     branches: [main]
+     paths:
+       - 'Cargo.toml'
+       - 'pyproject.toml'
+   workflow_dispatch:
+
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release_needed: ${{ steps.check.outputs.release_needed }}
+
+    steps:
+      - name: Checkout repository
+        run: |
+          # Actions run in the workspace (repo) directory by default
+          echo "Current directory: $PWD"
+          
+          # In a self-hosted runner, we need to manually pull the code
+          REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
+          
+          # If we're not in the repo directory already, get the code
+          if [ ! -d ".git" ]; then
+            echo "Initializing git repository"
+            git init
+            git remote add origin $REPO_URL
+          fi
+          
+          # Fetch the code with full history for workflow_dispatch
+          git fetch origin || true
+          
+          # For workflow_dispatch, we need to detect the current branch
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            # Get default branch or use main
+            DEFAULT_BRANCH=$(git remote show origin | grep "HEAD branch" | sed 's/.*: //')
+            DEFAULT_BRANCH=${DEFAULT_BRANCH:-main}
+            
+            echo "Running workflow_dispatch. Using branch: $DEFAULT_BRANCH"
+            git checkout -f $DEFAULT_BRANCH || git checkout -f main || git checkout -f master
+          else
+            # Normal checkout for push events
+            git checkout -f "$GITHUB_SHA"
+          fi
+          
+          # Get all tags
+          git fetch --tags
+          
+          echo "Repository checked out at $(git rev-parse HEAD) with full history"
+
+      - name: Setup Python
+        run: |
+          sudo apt-get update
+          # Try python3.10 first, fall back to system Python if not available
+          if command -v python3.10 &> /dev/null; then
+            # Use Python 3.10 if available
+            PYTHON_CMD=python3.10
+          else
+            # Fall back to system python3
+            PYTHON_CMD=python3
+            sudo apt-get install -y python3-dev python3-venv python3-pip
+          fi
+          
+          echo "Using Python: $($PYTHON_CMD --version)"
+          $PYTHON_CMD -m pip install --upgrade pip
+
+      - name: Cache pip
+        run: |
+          # Simple cache functionality
+          CACHE_DIR="/tmp/pip-cache"
+          CACHE_KEY="${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}"
+          
+          mkdir -p "$CACHE_DIR/$CACHE_KEY"
+          if [ -d "$CACHE_DIR/$CACHE_KEY" ]; then
+            echo "Cache found, restoring from $CACHE_DIR/$CACHE_KEY"
+            cp -R "$CACHE_DIR/$CACHE_KEY"/* ~/.cache/pip/ || true
+          fi
+
+      - name: Install dependencies
+        run: |
+          # Use the same Python command as in the setup step
+          if command -v python3.10 &> /dev/null; then
+            PYTHON_CMD=python3.10
+          else
+            PYTHON_CMD=python3
+          fi
+          
+          $PYTHON_CMD -m pip install --upgrade pip
+          $PYTHON_CMD -m pip install toml
+
+      - name: Extract version
+        id: version
+        run: |
+          # Debug - show working directory and list files
+          pwd
+          ls -la
+          
+          if [ ! -f "pyproject.toml" ]; then
+            echo "Error: pyproject.toml not found in current directory"
+            exit 1
+          fi
+          
+          # Use the same Python command as before
+          if command -v python3.10 &> /dev/null; then
+            PYTHON_CMD=python3.10
+          else
+            PYTHON_CMD=python3
+          fi
+          
+          VERSION=$($PYTHON_CMD -c "import toml; print(toml.load('pyproject.toml')['project']['version'])")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $VERSION"
+          echo "Found version $VERSION in pyproject.toml"
+          
+          # Also check Cargo.toml version and ensure they match
+          CARGO_VERSION=$(grep -E '^version = ' Cargo.toml | sed -E 's/version = "([^"]+)"/\1/')
+          echo "Cargo.toml version: $CARGO_VERSION"
+          
+          # Verify versions match
+          if [ "$VERSION" != "$CARGO_VERSION" ]; then
+            echo "ERROR: Version mismatch! pyproject.toml: $VERSION, Cargo.toml: $CARGO_VERSION"
+            exit 1
+          else
+            echo "✅ Versions match in both files"
+          fi
+
+      - name: Check if tag exists
+        id: check
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          if [ -z "$VERSION" ]; then
+            echo "Error: Version is empty. Check the previous steps."
+            exit 1
+          fi
+          
+          TAG="v$VERSION"
+          echo "Checking if tag $TAG exists..."
+          
+          # List all tags for debugging
+          echo "All tags:"
+          git tag -l
+          
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists, no release needed"
+            echo "release_needed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Tag $TAG does not exist, release needed"
+            echo "release_needed=true" >> $GITHUB_OUTPUT
+          fi
+
+  create-release:
+    needs: check-version
+    if: needs.check-version.outputs.release_needed == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        run: |
+          # Actions run in the workspace (repo) directory by default
+          echo "Current directory: $PWD"
+          
+          # In a self-hosted runner, we need to manually pull the code
+          REPO_URL="https://github.com/${GITHUB_REPOSITORY}.git"
+          
+          # If we're not in the repo directory already, get the code
+          if [ ! -d ".git" ]; then
+            echo "Initializing git repository"
+            git init
+            git remote add origin $REPO_URL
+          fi
+          
+          # Fetch the code
+          git fetch origin "$GITHUB_REF"
+          
+          # Checkout the specific ref that triggered the workflow
+          git checkout -f "$GITHUB_SHA"
+          
+          echo "Repository checked out at $(git rev-parse HEAD)"
+
+      - name: Create tag and GitHub release
+        run: |
+          VERSION=${{ needs.check-version.outputs.version }}
+          TAG="v$VERSION"
+          echo "Creating tag $TAG..."
+          
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+          
+          # Create the tag
+          git tag -a "$TAG" -m "Release v$VERSION"
+          
+          # Push tag with verbose output
+          echo "Pushing tag $TAG to repository..."
+          git push -v https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} "$TAG"
+          
+          # Verify tag was pushed
+          echo "Verifying tag was pushed..."
+          git ls-remote --tags origin | grep "$TAG"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        run: |
+          TAG="v${{ needs.check-version.outputs.version }}"
+          RELEASE_NAME="Release $TAG"
+          TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          
+          # Create GitHub Release using the GitHub API
+          API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/releases"
+          echo "Creating release for tag $TAG"
+          
+          curl -X POST \
+            -H "Authorization: token $TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            $API_URL \
+            -d "{
+              \"tag_name\": \"$TAG\",
+              \"name\": \"$RELEASE_NAME\",
+              \"draft\": false,
+              \"prerelease\": false,
+              \"generate_release_notes\": true
+            }"
+          
+          echo "Release created successfully"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Trigger Publish Workflow
+        run: |
+          # Install GitHub CLI
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+          sudo apt update
+          sudo apt install gh -y
+          
+          # Use curl to directly trigger the workflow
+          TOKEN="${{ secrets.WORKFLOW_PAT }}"
+          REPO="${GITHUB_REPOSITORY}"
+          WORKFLOW_ID="publish.yml"
+          
+          echo "Triggering publish workflow..."
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token $TOKEN" \
+            "https://api.github.com/repos/$REPO/actions/workflows/$WORKFLOW_ID/dispatches" \
+            -d "{\"ref\":\"${{ github.ref_name }}\"}"
+          
+          echo "Publish workflow triggered successfully"
+        env:
+          WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}

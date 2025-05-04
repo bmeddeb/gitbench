@@ -1,0 +1,57 @@
+name: Model Validation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'GitFleet/models/**'
+      - 'GitFleet/providers/**'
+      - 'tests/test_github_models.py'
+      - 'tests/test_repo_models.py'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'GitFleet/models/**'
+      - 'GitFleet/providers/**'
+      - 'tests/test_github_models.py'
+      - 'tests/test_repo_models.py'
+  # Enable manual triggering
+  workflow_dispatch:
+
+jobs:
+  validate-models:
+    runs-on: ubuntu-latest
+    name: Validate Pydantic Models
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+      
+      - name: Install dependencies in a virtual environment
+        run: |
+          python -m venv .venv      # Create a virtual environment
+          source .venv/bin/activate # Activate the virtual environment
+          python -m pip install --upgrade pip
+          pip install pytest pytest-asyncio python-dotenv maturin
+          pip install -e ".[dev,pydantic]"
+          
+      - name: Build Rust extension
+        run: |
+          source .venv/bin/activate # Activate the virtual environment
+          maturin develop
+      
+      - name: Run model validation tests
+        run: |
+          source .venv/bin/activate # Activate the virtual environment
+          pytest tests/test_github_models.py -v
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_API_TOKEN }}

@@ -1,0 +1,32 @@
+name: 'Setup Python'
+description: 'Set up a specific Python version'
+inputs:
+  python-version:
+    description: 'Python version to set up'
+    required: true
+    default: '3.12'
+runs:
+  using: 'composite'
+  steps:
+    - name: Use Python ${{ inputs.python-version }}
+      shell: bash
+      run: |
+        if command -v python${{ inputs.python-version }} &> /dev/null; then
+          echo "Python ${{ inputs.python-version }} is already installed."
+        elif command -v apt-get &> /dev/null; then
+          # Ubuntu/Debian
+          sudo apt-get update
+          sudo apt-get install -y python${{ inputs.python-version }} python${{ inputs.python-version }}-dev python${{ inputs.python-version }}-venv
+        elif command -v brew &> /dev/null; then
+          # macOS
+          brew install python@${{ inputs.python-version }}
+        elif command -v choco &> /dev/null; then
+          # Windows
+          choco install python --version=${{ inputs.python-version }}
+        else
+          echo "Unsupported operating system for Python installation."
+          exit 1
+        fi
+        
+        python${{ inputs.python-version }} -m pip install --upgrade pip
+        echo "Python ${{ inputs.python-version }} set up successfully."

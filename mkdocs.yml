@@ -1,0 +1,119 @@
+site_name: gitbench Documentation
+site_description: Documentation for gitbench, a high-performance Git operations library with Python bindings
+site_url: https://bmeddeb.github.io/gitbench
+repo_url: https://github.com/bmeddeb/gitbench
+repo_name: bmeddeb/gitbench
+
+docs_dir: docs
+site_dir: site
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: installation.md
+    - Quick Start: quick-start.md
+  - Core API:
+    - Overview: api/index.md
+    - Repository Manager: RepoManager.md
+    - Clone Operations: 
+      - Clone Status: CloneStatus.md
+      - Clone Task: CloneTask.md
+      - Clone Monitoring: api/clone-monitoring.md
+    - Blame & Commit Analysis: api/blame-commit.md
+  - Provider APIs:
+    - Overview: providers/index.md
+    - GitHub: providers/github.md
+    - Data Models: providers/models.md
+    - Implementation: providers/implementation.md
+  - Advanced:
+    - Token Management: token-management.md
+    - Pydantic Integration: pydantic-integration.md
+    - Error Handling: api/error-handling.md
+    - Performance Tips: advanced/performance.md
+  - Examples:
+    - Basic Usage: examples/basic-usage.md
+    - GitHub Client: examples/github-client.md
+    - Clone Monitoring: examples/clone-monitoring.md
+    - Secure Credentials: examples/secure-credentials.md
+    - Token Management: examples/token-manager.md
+    - Pydantic Integration: examples/pydantic-repo-manager.md
+    - Web Monitoring: examples/web-monitor.md
+  - Development:
+    - Contributing: development/contributing.md
+    - Architecture: development/architecture.md
+    - Python/Rust Bridge: development/python-rust-bridge.md
+  - API Reference:
+    - Complete API: gitbenchAPI.md
+
+theme:
+  name: material
+  palette:
+    - scheme: default # Light mode
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark
+    - scheme: slate # Dark mode
+      primary: deep purple
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Switch to light
+  
+  icon:
+    repo: fontawesome/brands/github
+  
+  features:
+    - navigation.tabs # Top tabs
+    - navigation.sections # Sections appear as groups
+    - navigation.expand # Expand sections by default
+    - navigation.indexes # Section index pages
+    - navigation.top # Back to top button
+    - search.highlight # Highlight search terms
+    - content.code.annotate # Code annotations
+    - content.tabs.link # Link tabs
+    - toc.follow # Table of contents follows scrolling
+  
+  vars:
+    content-width: 90%
+
+plugins:
+  - search # Search plugin
+  - git-revision-date-localized: # Show last updated date
+      type: date
+  - minify: # Minify HTML
+      minify_html: true
+
+markdown_extensions:
+  - admonition # Adds note/warning/info blocks
+  - attr_list # Add attributes to elements
+  - def_list # Definition lists
+  - footnotes # Footnotes
+  - meta # Metadata
+  - md_in_html # Markdown within HTML
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite # Inline code highlighting
+  - pymdownx.snippets # Include snippets
+  - pymdownx.superfences # Nested code blocks
+  - pymdownx.tabbed: # Tabbed content
+      alternate_style: true
+  - pymdownx.tasklist: # Task lists
+      custom_checkbox: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/bmeddeb/gitbench
+  version:
+    provider: mike
+    default: latest
+
+extra_css:
+  - stylesheets/extra.css
