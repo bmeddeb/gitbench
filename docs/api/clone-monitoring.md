@@ -1,10 +1,10 @@
 # Clone Monitoring
 
-GitFleet provides a powerful system for asynchronously cloning Git repositories and monitoring the clone progress. This page explains how to monitor clone operations effectively.
+gitbench provides a powerful system for asynchronously cloning Git repositories and monitoring the clone progress. This page explains how to monitor clone operations effectively.
 
 ## Overview
 
-When cloning repositories with GitFleet, you can:
+When cloning repositories with gitbench, you can:
 
 1. Monitor the progress of clone operations in real-time
 2. Get detailed status information for each clone task
@@ -31,7 +31,7 @@ The simplest way to monitor clone operations is to check the status after clonin
 
 ```python
 import asyncio
-from GitFleet import RepoManager
+from gitbench import RepoManager
 
 async def main():
     # Initialize repository manager
@@ -69,7 +69,7 @@ For a better user experience, you can monitor clone progress in real-time:
 ```python
 import asyncio
 import os
-from GitFleet import RepoManager
+from gitbench import RepoManager
 
 async def main():
     # Initialize repository manager
@@ -156,7 +156,7 @@ For long-running clone operations, you may want to implement timeouts:
 
 ```python
 import asyncio
-from GitFleet import RepoManager
+from gitbench import RepoManager
 
 async def clone_with_timeout(repo_manager, timeout=300):  # 5 minutes timeout
     # Start cloning
@@ -182,12 +182,12 @@ async def clone_with_timeout(repo_manager, timeout=300):  # 5 minutes timeout
 
 ## Visualizing Clone Progress in a Web Interface
 
-GitFleet can be integrated with web interfaces to provide a better visualization of clone progress. Here's a simple example using Flask:
+gitbench can be integrated with web interfaces to provide a better visualization of clone progress. Here's a simple example using Flask:
 
 ```python
 from flask import Flask, jsonify
 import asyncio
-from GitFleet import RepoManager
+from gitbench import RepoManager
 
 app = Flask(__name__)
 
@@ -342,7 +342,7 @@ async def clone_and_monitor():
 
 ## The `CloneStatus` and `CloneTask` Classes
 
-GitFleet provides two main classes for tracking clone operations:
+gitbench provides two main classes for tracking clone operations:
 
 ### CloneStatus
 
@@ -370,7 +370,7 @@ You can implement notifications for clone events:
 import asyncio
 import smtplib
 from email.message import EmailMessage
-from GitFleet import RepoManager
+from gitbench import RepoManager
 
 async def clone_with_notifications(repo_manager, email):
     # Start cloning

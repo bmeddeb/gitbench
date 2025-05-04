@@ -1,6 +1,6 @@
 # Secure Credentials Example
 
-This example demonstrates how to use GitFleet's `CredentialManager` to securely store and retrieve authentication tokens and credentials. It covers different encryption methods, from simple base64 encoding to AES encryption and password-derived keys.
+This example demonstrates how to use gitbench's `CredentialManager` to securely store and retrieve authentication tokens and credentials. It covers different encryption methods, from simple base64 encoding to AES encryption and password-derived keys.
 
 ## Code Example
 
@@ -21,8 +21,8 @@ and properly manage encryption keys.
 import os
 from getpass import getpass
 
-from GitFleet.providers.base import ProviderType
-from GitFleet.utils.auth import CredentialManager, derive_key_from_password
+from gitbench.providers.base import ProviderType
+from gitbench.utils.auth import CredentialManager, derive_key_from_password
 
 
 def basic_example():
@@ -75,7 +75,7 @@ def aes_example():
 def password_example():
     """Example using a password-derived key with salt."""
     # Path to store the salt
-    salt_file = "~/.gitfleet/salt.bin"
+    salt_file = "~/.gitbench/salt.bin"
 
     # In a real application, you would prompt for the password securely
     # password = getpass("Enter your password: ")
@@ -242,9 +242,9 @@ This allows integration with hardware security modules or other encryption syste
 
 To run this example:
 
-1. Install GitFleet with crypto support:
+1. Install gitbench with crypto support:
    ```bash
-   pip install "gitfleet[crypto]"
+   pip install "gitbench[crypto]"
    ```
 
 2. Run the example:
@@ -265,10 +265,10 @@ The `CredentialManager` class provides the following methods:
 
 ### Provider Types
 
-GitFleet supports different credential provider types:
+gitbench supports different credential provider types:
 
 ```python
-from GitFleet.providers.base import ProviderType
+from gitbench.providers.base import ProviderType
 
 # Available provider types
 ProviderType.GITHUB    # GitHub credentials
@@ -278,7 +278,7 @@ ProviderType.BITBUCKET # Bitbucket credentials
 
 ### Encryption Methods
 
-The encryption methods used in GitFleet are:
+The encryption methods used in gitbench are:
 
 1. **Base64**: Simple encoding with no cryptographic security
 2. **AES-GCM**: Authenticated encryption with associated data (AEAD)

@@ -1,6 +1,6 @@
 # Token Manager Example
 
-This example demonstrates how to use GitFleet's `TokenManager` to handle multiple authentication tokens for GitHub API operations. The token manager automatically rotates tokens when rate limits are reached, ensuring your application can continue making API requests without interruption.
+This example demonstrates how to use gitbench's `TokenManager` to handle multiple authentication tokens for GitHub API operations. The token manager automatically rotates tokens when rate limits are reached, ensuring your application can continue making API requests without interruption.
 
 ## Code Example
 
@@ -9,12 +9,12 @@ This example demonstrates how to use GitFleet's `TokenManager` to handle multipl
 """
 Token Manager Example
 
-This example demonstrates how to use multiple tokens with the GitFleet library
+This example demonstrates how to use multiple tokens with the gitbench library
 to handle rate limiting across different API providers.
 
 Optional dependencies:
 - cryptography: For secure token encryption (pip install cryptography)
-  Install with: pip install "gitfleet[crypto]"
+  Install with: pip install "gitbench[crypto]"
 """
 
 import os
@@ -22,8 +22,8 @@ import asyncio
 import time
 from pprint import pprint
 
-from GitFleet import GitHubClient
-from GitFleet.providers import TokenManager, TokenStatus, ProviderType
+from gitbench import GitHubClient
+from gitbench.providers import TokenManager, TokenStatus, ProviderType
 
 
 async def main():
@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
 ## Key Features Demonstrated
 
-This example demonstrates several key features of GitFleet's token management capabilities:
+This example demonstrates several key features of gitbench's token management capabilities:
 
 1. **Multiple Token Management**: Managing and tracking multiple API tokens
 2. **Automatic Token Rotation**: Switching to a different token when rate limits are reached
@@ -138,7 +138,7 @@ This example demonstrates several key features of GitFleet's token management ca
 
 ## Token Manager Architecture
 
-GitFleet's `TokenManager` is designed to solve the common problem of API rate limiting when working with GitHub and other Git hosting providers. The architecture includes:
+gitbench's `TokenManager` is designed to solve the common problem of API rate limiting when working with GitHub and other Git hosting providers. The architecture includes:
 
 1. **Token Collection**: Store and manage multiple tokens per provider
 2. **Rate Limit Tracking**: Track remaining API calls for each token
@@ -158,9 +158,9 @@ The `TokenManager` tracks the following status types for each token:
 
 To run this example:
 
-1. Install GitFleet:
+1. Install gitbench:
    ```bash
-   pip install gitfleet
+   pip install gitbench
    ```
 
 2. Set up multiple GitHub tokens as environment variables:
@@ -179,7 +179,7 @@ To run this example:
 
 ## Integration with API Clients
 
-The token manager integrates seamlessly with GitFleet's API clients:
+The token manager integrates seamlessly with gitbench's API clients:
 
 ```python
 # Create a token manager
@@ -204,7 +204,7 @@ repos = await github.fetch_repositories("octocat")
 Always store tokens securely:
 
 ```python
-from GitFleet.utils.auth import CredentialManager
+from gitbench.utils.auth import CredentialManager
 
 # Create a secure credential manager
 credential_manager = CredentialManager.from_password(password="secure_password")
@@ -226,7 +226,7 @@ Different strategies can be implemented for token rotation:
 2. **Priority-Based**: Use certain tokens before others
 3. **Rate-Aware**: Select tokens with the most remaining rate limit
 
-GitFleet's `TokenManager` uses a rate-aware strategy by default.
+gitbench's `TokenManager` uses a rate-aware strategy by default.
 
 ### Handling Rate Limit Exhaustion
 

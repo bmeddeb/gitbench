@@ -7,17 +7,17 @@ This example demonstrates how to create a simple web application for monitoring 
 ```python
 #!/usr/bin/env python3
 """
-GitFleet Web Monitor Example
+gitbench Web Monitor Example
 
 This example demonstrates how to create a web-based dashboard for monitoring
-repository cloning operations using GitFleet and FastAPI.
+repository cloning operations using gitbench and FastAPI.
 
 Dependencies:
 - fastapi: Web framework for APIs (pip install fastapi)
 - uvicorn: ASGI server for FastAPI (pip install uvicorn)
 - jinja2: Template engine (pip install jinja2)
 
-Install all with: pip install "gitfleet[web]"
+Install all with: pip install "gitbench[web]"
 """
 
 import os
@@ -32,12 +32,12 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from GitFleet import RepoManager
-from GitFleet.models.repo import CloneTask
+from gitbench import RepoManager
+from gitbench.models.repo import CloneTask
 
 
 # Create the FastAPI application
-app = FastAPI(title="GitFleet Web Monitor")
+app = FastAPI(title="gitbench Web Monitor")
 
 # Create a directory for templates and static files
 os.makedirs("templates", exist_ok=True)
@@ -169,13 +169,13 @@ template_content = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GitFleet Monitor</title>
+    <title>gitbench Monitor</title>
     <link rel="stylesheet" href="/static/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
     <div class="container">
-        <h1>GitFleet Repository Clone Monitor</h1>
+        <h1>gitbench Repository Clone Monitor</h1>
         
         <div class="summary">
             <div class="summary-item">
@@ -497,7 +497,7 @@ async def cleanup():
 
 # Main function to start the server
 def main():
-    parser = argparse.ArgumentParser(description="GitFleet Web Monitor")
+    parser = argparse.ArgumentParser(description="gitbench Web Monitor")
     parser.add_argument("--host", default="127.0.0.1", help="Host address to bind to")
     parser.add_argument("--port", type=int, default=8000, help="Port to bind to")
     parser.add_argument("--reload", action="store_true", help="Enable auto-reload for development")
@@ -533,12 +533,12 @@ if __name__ == "__main__":
 
 ## Key Features Demonstrated
 
-This example demonstrates several key features of GitFleet combined with web technologies:
+This example demonstrates several key features of gitbench combined with web technologies:
 
 1. **Web Dashboard**: Creating a real-time web interface for clone monitoring
 2. **WebSockets**: Using WebSockets for live updates without page refreshing
 3. **RESTful API**: Providing HTTP endpoints for controlling clone operations
-4. **FastAPI Integration**: Combining GitFleet with the FastAPI web framework
+4. **FastAPI Integration**: Combining gitbench with the FastAPI web framework
 5. **Automatic Status Updates**: Broadcasting clone status changes to connected clients
 6. **Interactive UI**: Visual representation of clone progress and status
 
@@ -548,7 +548,7 @@ The web monitor application consists of several components:
 
 1. **FastAPI Server**: Provides the web interface and API endpoints
 2. **WebSocket Server**: Handles real-time communication with web clients
-3. **GitFleet Backend**: Manages repository cloning and monitoring
+3. **gitbench Backend**: Manages repository cloning and monitoring
 4. **HTML/CSS Frontend**: Provides a user-friendly interface
 5. **JavaScript Client**: Updates the UI in real-time
 
@@ -556,9 +556,9 @@ The web monitor application consists of several components:
 
 To run this example:
 
-1. Install GitFleet with web dependencies:
+1. Install gitbench with web dependencies:
    ```bash
-   pip install "gitfleet[web]"
+   pip install "gitbench[web]"
    ```
 
 2. Save the example code to `web_monitor.py`

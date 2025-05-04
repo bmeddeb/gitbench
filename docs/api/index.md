@@ -93,4 +93,5 @@ See the [Error Handling](error-handling.md) guide for more details.
 
 - [Repository Manager](../RepoManager.md): Detailed documentation for the main RepoManager class
 - [CloneStatus](../CloneStatus.md) and [CloneTask](../CloneTask.md): Working with clone operations
+- [Complete API Reference](../gitbenchAPI.md): Comprehensive reference for all classes and methods
 - [Examples](../examples/basic-usage.md): Practical examples of using the Core API

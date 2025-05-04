@@ -1,6 +1,6 @@
-# Contributing to GitFleet
+# Contributing to gitbench
 
-Thank you for your interest in contributing to GitFleet! This document provides guidelines and instructions for contributing to the project. We welcome contributions of all kinds, including bug reports, feature requests, documentation improvements, and code changes.
+Thank you for your interest in contributing to gitbench! This document provides guidelines and instructions for contributing to the project. We welcome contributions of all kinds, including bug reports, feature requests, documentation improvements, and code changes.
 
 ## Table of Contents
 
@@ -36,14 +36,14 @@ Before you begin contributing, ensure you have the following installed:
 2. Clone your fork locally:
 
 ```bash
-git clone https://github.com/bmeddeb/GitFleet.git
-cd GitFleet
+git clone https://github.com/bmeddeb/gitbench.git
+cd gitbench
 ```
 
 3. Add the upstream repository as a remote:
 
 ```bash
-git remote add upstream https://github.com/bmeddeb/GitFleet.git
+git remote add upstream https://github.com/bmeddeb/gitbench.git
 ```
 
 ## Development Environment
@@ -208,7 +208,7 @@ When submitting a pull request:
 
 ## Release Process
 
-The GitFleet release process is as follows:
+The gitbench release process is as follows:
 
 1. Version bumps follow [Semantic Versioning](https://semver.org/)
 2. Releases are tagged in Git with the version number (e.g., `v1.0.0`)
@@ -226,7 +226,7 @@ Before a release:
 
 ## Architecture Overview
 
-For a deeper understanding of GitFleet's architecture, see the [Architecture Documentation](architecture.md) and [Python/Rust Bridge](python-rust-bridge.md) pages.
+For a deeper understanding of gitbench's architecture, see the [Architecture Documentation](architecture.md) and [Python/Rust Bridge](python-rust-bridge.md) pages.
 
 ## Getting Help
 
@@ -236,4 +236,4 @@ If you need help with contributing:
 - Join our community chat/forum (if available)
 - Reach out to maintainers via email
 
-Thank you for contributing to GitFleet! Your efforts help make this project better for everyone.
+Thank you for contributing to gitbench! Your efforts help make this project better for everyone.

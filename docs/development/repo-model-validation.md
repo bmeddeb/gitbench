@@ -1,10 +1,10 @@
-# Repository Model Validation in GitFleet
+# Repository Model Validation in gitbench
 
-This document describes the validation approach for the repository-related models in GitFleet, including `CloneStatus`, `CloneTask`, and `RepoManager`.
+This document describes the validation approach for the repository-related models in gitbench, including `CloneStatus`, `CloneTask`, and `RepoManager`.
 
 ## Overview
 
-GitFleet implements a dual architecture where core functionality is written in Rust for performance, while Python code provides a user-friendly interface. The repository management models bridge these two worlds by:
+gitbench implements a dual architecture where core functionality is written in Rust for performance, while Python code provides a user-friendly interface. The repository management models bridge these two worlds by:
 
 1. Defining Pydantic models that mirror the Rust-generated classes
 2. Providing conversion methods between Rust objects and Pydantic models

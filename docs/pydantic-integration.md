@@ -1,10 +1,10 @@
 # Pydantic Integration
 
-GitFleet provides comprehensive integration with [Pydantic](https://docs.pydantic.dev/), offering enhanced validation, serialization, and better type safety for all data models.
+gitbench provides comprehensive integration with [Pydantic](https://docs.pydantic.dev/), offering enhanced validation, serialization, and better type safety for all data models.
 
 ## Overview
 
-Pydantic integration in GitFleet provides the following benefits:
+Pydantic integration in gitbench provides the following benefits:
 
 - **Strong Validation**: All API responses are validated against defined schemas
 - **Serialization**: Easy conversion to JSON, dictionaries, and other formats
@@ -13,7 +13,7 @@ Pydantic integration in GitFleet provides the following benefits:
 
 ## Data Models
 
-All GitFleet data models are built using Pydantic's `BaseModel` class, including:
+All gitbench data models are built using Pydantic's `BaseModel` class, including:
 
 - Provider models (`RepoInfo`, `UserInfo`, etc.)
 - Repository management models (`CloneStatus`, `CloneTask`)
@@ -24,7 +24,7 @@ All GitFleet data models are built using Pydantic's `BaseModel` class, including
 ### Basic Model Usage
 
 ```python
-from GitFleet import RepoInfo
+from gitbench import RepoInfo
 
 # Create a model instance with validation
 repo = RepoInfo(
@@ -58,7 +58,7 @@ if repo.created_at:
 When using the GitHubClient, all API responses are automatically converted to Pydantic models:
 
 ```python
-from GitFleet import GitHubClient
+from gitbench import GitHubClient
 
 async def main():
     client = GitHubClient(token="your-token")
@@ -77,10 +77,10 @@ async def main():
 
 ### Rust Type Integration
 
-GitFleet provides Pydantic wrappers for the Rust-generated classes:
+gitbench provides Pydantic wrappers for the Rust-generated classes:
 
 ```python
-from GitFleet import RepoManager, CloneTask, CloneStatus, CloneStatusType
+from gitbench import RepoManager, CloneTask, CloneStatus, CloneStatusType
 
 async def main():
     # Create a RepoManager
@@ -111,21 +111,21 @@ async def main():
 
 ## Installation
 
-To use Pydantic features, install GitFleet with the Pydantic extra:
+To use Pydantic features, install gitbench with the Pydantic extra:
 
 ```bash
-pip install "gitfleet[pydantic]"
+pip install "gitbench[pydantic]"
 ```
 
 Or install with multiple extras:
 
 ```bash
-pip install "gitfleet[pydantic,pandas]"
+pip install "gitbench[pydantic,pandas]"
 ```
 
 ## Conversion Utilities
 
-GitFleet provides utility functions for working with Pydantic models:
+gitbench provides utility functions for working with Pydantic models:
 
 - `to_dict(obj)`: Convert any object to a dictionary
 - `to_json(obj, indent=None)`: Convert any object to a JSON string
@@ -134,4 +134,4 @@ GitFleet provides utility functions for working with Pydantic models:
 
 ## Type Stubs
 
-GitFleet includes comprehensive type stubs (`.pyi` files) for all Pydantic models, ensuring proper IDE completions and static type checking support.
+gitbench includes comprehensive type stubs (`.pyi` files) for all Pydantic models, ensuring proper IDE completions and static type checking support.

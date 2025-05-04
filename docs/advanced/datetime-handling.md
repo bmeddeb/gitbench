@@ -1,6 +1,6 @@
 # Working with Dates and Times
 
-GitFleet provides helper methods for working with dates and times from Git provider APIs. This guide explains how to use them correctly, especially when performing date arithmetic.
+gitbench provides helper methods for working with dates and times from Git provider APIs. This guide explains how to use them correctly, especially when performing date arithmetic.
 
 ## Date Fields in API Responses
 
@@ -11,11 +11,11 @@ Most Git provider APIs return dates and times as ISO 8601 formatted strings:
 "updated_at": "2023-09-15T12:34:56Z"
 ```
 
-GitFleet models store these as string fields (`created_at`, `updated_at`, `pushed_at`) to preserve the original format. However, helper methods are provided to convert these strings to Python `datetime` objects when needed.
+gitbench models store these as string fields (`created_at`, `updated_at`, `pushed_at`) to preserve the original format. However, helper methods are provided to convert these strings to Python `datetime` objects when needed.
 
 ## Converting Strings to Datetime Objects
 
-GitFleet provides helper methods to convert date strings to `datetime` objects:
+gitbench provides helper methods to convert date strings to `datetime` objects:
 
 ```python
 # Get repository details
@@ -96,7 +96,7 @@ if created_dt:
 
 ## Working with Multiple Date Fields
 
-Many GitFleet models contain multiple date fields:
+Many gitbench models contain multiple date fields:
 
 ```python
 # Get all available date information

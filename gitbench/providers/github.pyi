@@ -1,15 +1,13 @@
 """
-Type stubs for GitHub API client.
+Type stubs for the GitHub API client.
 """
 
-import time
-import re
-import httpx
-from typing import Dict, List, Any, Optional, Union, TypeVar, Type, cast
-from datetime import datetime
 
-from .base import GitProviderClient, ProviderType, ProviderError, AuthError as BaseAuthError, RateLimitError as BaseRateLimitError
-from .token_manager import TokenManager, TokenInfo
+from typing import Dict, List, Any, Optional, TypeVar, Type
+
+
+from .base import GitProviderClient,  ProviderError, AuthError as BaseAuthError, RateLimitError as BaseRateLimitError
+from .token_manager import TokenManager
 from ..models.common import (
     UserInfo,
     RepoInfo,
@@ -17,6 +15,7 @@ from ..models.common import (
     RateLimitInfo,
     BranchInfo,
     ContributorInfo,
+
 )
 
 T = TypeVar("T")

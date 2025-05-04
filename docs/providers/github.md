@@ -1,13 +1,13 @@
 # GitHub API Client
 
-The GitFleet GitHub API client provides a convenient interface to interact with the GitHub API. This client allows you to fetch repository information, user data, and other GitHub-specific resources.
+The gitbench GitHub API client provides a convenient interface to interact with the GitHub API. This client allows you to fetch repository information, user data, and other GitHub-specific resources.
 
 ## Installation
 
-The GitHub client is included with GitFleet. No additional installation is required.
+The GitHub client is included with gitbench. No additional installation is required.
 
 ```python
-from GitFleet import GitHubClient
+from gitbench import GitHubClient
 ```
 
 ## Authentication
@@ -132,7 +132,7 @@ if hasattr(github, "_use_rust"):
 The GitHub client includes a comprehensive error hierarchy:
 
 ```python
-from GitFleet.providers.base import ProviderError, AuthError, RateLimitError
+from gitbench.providers.base import ProviderError, AuthError, RateLimitError
 
 try:
     repos = await github.fetch_repositories("octocat")
@@ -150,7 +150,7 @@ except ProviderError as e:
 You can also use provider-specific error classes:
 
 ```python
-from GitFleet.providers.github import GitHubError
+from gitbench.providers.github import GitHubError
 
 try:
     repos = await github.fetch_repositories("octocat")
@@ -174,7 +174,7 @@ Convert API response data to pandas DataFrames for analysis:
 
 ```python
 # Method 1: Using utility function (recommended)
-from GitFleet import to_dataframe
+from gitbench import to_dataframe
 
 repos = await github.fetch_repositories("octocat")
 df = to_dataframe(repos)

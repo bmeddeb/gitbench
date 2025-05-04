@@ -1,10 +1,10 @@
-# Model Validation in GitFleet
+# Model Validation in gitbench
 
-This document describes how GitFleet uses Pydantic models to validate and structure data from various Git provider APIs, specifically focusing on GitHub.
+This document describes how gitbench uses Pydantic models to validate and structure data from various Git provider APIs, specifically focusing on GitHub.
 
 ## GitHub API Response Validation
 
-GitFleet uses Pydantic models to validate and structure the responses from the GitHub API. These models ensure that the data is correctly typed and structured for use in the application.
+gitbench uses Pydantic models to validate and structure the responses from the GitHub API. These models ensure that the data is correctly typed and structured for use in the application.
 
 ### Models Overview
 
@@ -42,7 +42,7 @@ Some GitHub API responses require special handling:
 
 ## Testing Model Validation
 
-GitFleet includes tests to verify that the Pydantic models correctly validate GitHub API responses.
+gitbench includes tests to verify that the Pydantic models correctly validate GitHub API responses.
 
 ### Running Tests
 

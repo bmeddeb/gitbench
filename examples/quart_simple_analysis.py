@@ -532,16 +532,40 @@ async def extract_commit_history(session_id):
                     monthly_commits = df.groupby('month').size().tail(6)
                     monthly_commits_dict = {str(k): int(v) for k, v in monthly_commits.items()}
                     
+                    # Handle empty dataframes or missing date column correctly
+                    min_date = None
+                    max_date = None
+                    
+                    if 'date' in df.columns and not df['date'].empty:
+                        min_date = df['date'].min().isoformat()
+                        max_date = df['date'].max().isoformat()
+                    
+                    # Calculate totals safely
+                    total_additions = 0
+                    total_deletions = 0
+                    
+                    if 'additions' in df.columns and not df['additions'].empty:
+                        # Handle non-numeric values by converting to numeric and ignoring errors
+                        additions = pd.to_numeric(df['additions'], errors='coerce')
+                        total_additions = int(additions.sum())
+                    
+                    if 'deletions' in df.columns and not df['deletions'].empty:
+                        # Handle non-numeric values by converting to numeric and ignoring errors
+                        deletions = pd.to_numeric(df['deletions'], errors='coerce')
+                        total_deletions = int(deletions.sum())
+                    
+                    net_change = total_additions - total_deletions
+                    
                     commit_stats = {
                         'count': len(df),
                         'date_range': {
-                            'min': df['date'].min().isoformat() if not df['date'].empty else None,
-                            'max': df['date'].max().isoformat() if not df['date'].empty else None
+                            'min': min_date,
+                            'max': max_date
                         },
                         'authors': df['author_name'].value_counts().head(10).to_dict(),
-                        'total_additions': int(df['additions'].sum()),
-                        'total_deletions': int(df['deletions'].sum()),
-                        'net_change': int(df['additions'].sum() - df['deletions'].sum()),
+                        'total_additions': total_additions,
+                        'total_deletions': total_deletions,
+                        'net_change': net_change,
                         'commits_by_month': monthly_commits_dict,
                         'performance': {
                             'duration_seconds': duration,

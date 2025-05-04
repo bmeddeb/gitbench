@@ -1,6 +1,6 @@
 # Pydantic Integration Example
 
-This example demonstrates how to use GitFleet's Pydantic integration for enhanced type safety, validation, and serialization capabilities. The example shows how to use Pydantic models with GitFleet's `RepoManager`, `CloneStatus`, and `CloneTask` classes.
+This example demonstrates how to use gitbench's Pydantic integration for enhanced type safety, validation, and serialization capabilities. The example shows how to use Pydantic models with gitbench's `RepoManager`, `CloneStatus`, and `CloneTask` classes.
 
 ## Code Example
 
@@ -16,7 +16,7 @@ This example demonstrates how to use the Pydantic models with the Rust-based Rep
 
 Optional dependencies:
 - pydantic: Required for Pydantic models (pip install pydantic)
-  Install with: pip install "gitfleet[pydantic]"
+  Install with: pip install "gitbench[pydantic]"
 """
 
 import os
@@ -26,11 +26,11 @@ import asyncio
 from pprint import pprint
 from datetime import datetime
 
-# Add the parent directory to the Python path so we can import GitFleet modules directly
+# Add the parent directory to the Python path so we can import gitbench modules directly
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import the Pydantic-enabled models
-from GitFleet.models.repo import (
+from gitbench.models.repo import (
     RepoManager, CloneStatus, CloneTask, CloneStatusType,
     clone_status_to_pydantic, clone_task_to_pydantic
 )
@@ -146,9 +146,9 @@ if __name__ == "__main__":
 
 ## Key Features Demonstrated
 
-This example demonstrates several key features of GitFleet's Pydantic integration:
+This example demonstrates several key features of gitbench's Pydantic integration:
 
-1. **Pydantic Models**: Using Pydantic models for GitFleet's core classes
+1. **Pydantic Models**: Using Pydantic models for gitbench's core classes
 2. **Type Validation**: Automatic validation of data types and values
 3. **Serialization**: Converting models to dictionaries and JSON
 4. **Error Handling**: Catching and handling validation errors
@@ -157,7 +157,7 @@ This example demonstrates several key features of GitFleet's Pydantic integratio
 
 ## Pydantic Integration
 
-GitFleet provides Pydantic-enabled versions of its core classes:
+gitbench provides Pydantic-enabled versions of its core classes:
 
 | Core Type | Pydantic Model |
 |-----------|---------------|
@@ -213,9 +213,9 @@ task_json = task.model_dump_json(
 
 To run this example:
 
-1. Install GitFleet with pydantic support:
+1. Install gitbench with pydantic support:
    ```bash
-   pip install "gitfleet[pydantic]"
+   pip install "gitbench[pydantic]"
    ```
 
 2. Set your GitHub token as an environment variable:
@@ -230,11 +230,11 @@ To run this example:
 
 ## Conversion Functions
 
-GitFleet provides utility functions to convert between Rust types and Pydantic models:
+gitbench provides utility functions to convert between Rust types and Pydantic models:
 
 ```python
 # Convert from Rust type to Pydantic model
-from GitFleet.models.repo import clone_status_to_pydantic, clone_task_to_pydantic
+from gitbench.models.repo import clone_status_to_pydantic, clone_task_to_pydantic
 
 # Get a Rust clone task from the repo manager
 rust_task = repo_manager.get_clone_task(url)
@@ -245,10 +245,10 @@ pydantic_task = clone_task_to_pydantic(rust_task)
 
 ## Enum Types
 
-GitFleet provides Pydantic-compatible enums for various types:
+gitbench provides Pydantic-compatible enums for various types:
 
 ```python
-from GitFleet.models.repo import CloneStatusType
+from gitbench.models.repo import CloneStatusType
 
 # Available status types
 CloneStatusType.QUEUED     # Repository is queued for cloning
@@ -263,11 +263,11 @@ These enums provide type safety and auto-completion in supported IDEs.
 
 ### Custom Validation
 
-You can extend GitFleet's Pydantic models with custom validation:
+You can extend gitbench's Pydantic models with custom validation:
 
 ```python
 from pydantic import validator
-from GitFleet.models.repo import CloneTask
+from gitbench.models.repo import CloneTask
 
 class CustomCloneTask(CloneTask):
     @validator('url')
@@ -279,12 +279,12 @@ class CustomCloneTask(CloneTask):
 
 ### Integration with Other Systems
 
-Pydantic models make it easy to integrate GitFleet with web frameworks and APIs:
+Pydantic models make it easy to integrate gitbench with web frameworks and APIs:
 
 ```python
 # FastAPI example
 from fastapi import FastAPI
-from GitFleet.models.repo import CloneTask
+from gitbench.models.repo import CloneTask
 
 app = FastAPI()
 
@@ -298,4 +298,4 @@ async def clone_repository(task: CloneTask):
 ## Related Examples
 
 - [GitHub Client](github-client.md): Working with the GitHub API client
-- [Basic Usage](basic-usage.md): Core GitFleet usage without Pydantic
+- [Basic Usage](basic-usage.md): Core gitbench usage without Pydantic

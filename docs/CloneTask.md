@@ -1,6 +1,6 @@
 # CloneTask
 
-In GitFleet, there are two types of `CloneTask` objects that represent repository cloning tasks and their statuses:
+In gitbench, there are two types of `CloneTask` objects that represent repository cloning tasks and their statuses:
 
 1. **RustCloneTask**: The native Rust implementation returned by `RepoManager.fetch_clone_tasks()`
 2. **PydanticCloneTask**: A Pydantic model version with additional validation and serialization features
@@ -29,7 +29,7 @@ The `PydanticCloneTask` class provides a Pydantic model with the same fields as 
 
 ```python
 import asyncio
-from GitFleet import RepoManager
+from gitbench import RepoManager
 
 async def main():
     # Create a repo manager
@@ -59,7 +59,7 @@ asyncio.run(main())
 
 ```python
 import asyncio
-from GitFleet import RepoManager, convert_clone_tasks
+from gitbench import RepoManager, convert_clone_tasks
 
 async def main():
     # Create a repo manager

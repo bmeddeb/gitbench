@@ -643,9 +643,15 @@
             document.getElementById('linesDeleted').textContent = commits.total_deletions || 0;
             document.getElementById('netChange').textContent = commits.net_change || 0;
             
+            // Update date range with proper handling for missing values
             if (commits.date_range) {
-                document.getElementById('commitDateRange').textContent = 
-                    `${commits.date_range.min || 'N/A'} to ${commits.date_range.max || 'N/A'}`;
+                const minDate = commits.date_range.min || 'N/A';
+                const maxDate = commits.date_range.max || 'N/A';
+                const dateRangeText = (minDate === 'N/A' || maxDate === 'N/A') ? 
+                    'N/A' : `${minDate} to ${maxDate}`;
+                document.getElementById('commitDateRange').textContent = dateRangeText;
+            } else {
+                document.getElementById('commitDateRange').textContent = 'N/A';
             }
             
             // Populate top contributors table

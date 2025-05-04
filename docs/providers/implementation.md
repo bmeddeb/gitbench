@@ -1,6 +1,6 @@
 # Dual Implementation Architecture
 
-GitFleet supports both Rust-based and pure Python implementations for its Git provider APIs. This architecture provides performance benefits when the Rust components are available, with a fallback to a pure Python implementation for maximum compatibility.
+gitbench supports both Rust-based and pure Python implementations for its Git provider APIs. This architecture provides performance benefits when the Rust components are available, with a fallback to a pure Python implementation for maximum compatibility.
 
 ## Architecture Overview
 
@@ -25,10 +25,10 @@ GitFleet supports both Rust-based and pure Python implementations for its Git pr
 
 ## Implementation Detection
 
-When you create a provider client (like `GitHubClient`), GitFleet automatically detects if the Rust implementation is available:
+When you create a provider client (like `GitHubClient`), gitbench automatically detects if the Rust implementation is available:
 
 ```python
-from GitFleet import GitHubClient
+from gitbench import GitHubClient
 
 # The client will use Rust implementation if available,
 # otherwise it will fall back to Python
@@ -37,7 +37,7 @@ client = GitHubClient(token="your-token")
 
 ## Forcing Python Implementation
 
-You can force GitFleet to use the Python implementation even when Rust is available:
+You can force gitbench to use the Python implementation even when Rust is available:
 
 ```python
 # Force Python implementation
@@ -57,7 +57,7 @@ This can be useful for:
 You can check which implementation is being used:
 
 ```python
-from GitFleet import GitHubClient
+from gitbench import GitHubClient
 
 client = GitHubClient(token="your-token")
 
@@ -107,8 +107,8 @@ python_client = GitHubClient(token="your-token", use_python_impl=True)
 Both implementations support the TokenManager for handling multiple tokens and rate limits:
 
 ```python
-from GitFleet import GitHubClient
-from GitFleet.providers import TokenManager
+from gitbench import GitHubClient
+from gitbench.providers import TokenManager
 
 # Create a token manager
 token_manager = TokenManager()
@@ -142,7 +142,7 @@ The Python implementation:
 
 ## Future Compatibility
 
-As GitFleet evolves:
+As gitbench evolves:
 - Both implementations will maintain API compatibility
 - New features will be added to both implementations when possible
 - The Rust implementation will continue to focus on performance

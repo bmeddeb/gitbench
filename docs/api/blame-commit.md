@@ -1,10 +1,10 @@
 # Blame and Commit Analysis
 
-GitFleet provides powerful tools for analyzing repository blame information and commit history. This page explains how to use these features and interpret the results.
+gitbench provides powerful tools for analyzing repository blame information and commit history. This page explains how to use these features and interpret the results.
 
 ## Blame Analysis
 
-Blame analysis identifies the author and commit information for each line of code in a file. GitFleet's blame analysis is implemented in Rust for maximum performance, making it significantly faster than pure Python implementations.
+Blame analysis identifies the author and commit information for each line of code in a file. gitbench's blame analysis is implemented in Rust for maximum performance, making it significantly faster than pure Python implementations.
 
 ### Using the `bulk_blame` Method
 
@@ -12,7 +12,7 @@ The `bulk_blame` method allows you to analyze blame information for multiple fil
 
 ```python
 import asyncio
-from GitFleet import RepoManager
+from gitbench import RepoManager
 
 async def analyze_blame():
     # Initialize repository manager
@@ -107,7 +107,7 @@ Commit analysis extracts detailed information about the commit history of a repo
 
 ```python
 import asyncio
-from GitFleet import RepoManager
+from gitbench import RepoManager
 from datetime import datetime
 
 async def analyze_commits():
@@ -217,7 +217,7 @@ print(f"\nTotal changes: +{total_additions} -{total_deletions}")
 
 ## Integrating with Pandas
 
-GitFleet's results can be easily converted to pandas DataFrames for advanced analysis:
+gitbench's results can be easily converted to pandas DataFrames for advanced analysis:
 
 ```python
 import pandas as pd

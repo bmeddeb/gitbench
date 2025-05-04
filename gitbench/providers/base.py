@@ -5,8 +5,8 @@ This module provides the base class for all Git provider API clients.
 """
 
 from abc import ABC, abstractmethod
-import asyncio
-from typing import Dict, List, Optional, Any, Union
+
+from typing import  List, Any, Union
 
 # Import models from the models package
 from ..models.common import (

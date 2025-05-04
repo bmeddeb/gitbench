@@ -1,17 +1,17 @@
-# CI Setup for GitFleet
+# CI Setup for gitbench
 
-This document explains how to set up the CI environment for GitFleet, particularly for running tests that require GitHub API authentication.
+This document explains how to set up the CI environment for gitbench, particularly for running tests that require GitHub API authentication.
 
 ## GitHub Token for CI
 
-Several GitFleet tests require a valid GitHub API token to interact with the GitHub API. This section explains how to set up a token for CI use.
+Several gitbench tests require a valid GitHub API token to interact with the GitHub API. This section explains how to set up a token for CI use.
 
 ### Creating a GitHub API Token
 
 1. Log in to your GitHub account
 2. Go to Settings → Developer settings → Personal access tokens → Fine-grained tokens
 3. Click "Generate new token"
-4. Give your token a descriptive name, e.g., "GitFleet CI Tests"
+4. Give your token a descriptive name, e.g., "gitbench CI Tests"
 5. Set an expiration date (or select "No expiration" for CI tokens)
 6. Select the repository scope to limit the token to your repository
 7. Set the following permissions:
@@ -35,7 +35,7 @@ This token will now be available to GitHub Actions workflows as `${{ secrets.GH_
 
 The model validation workflow (`model-validation.yml`) automatically:
 
-1. Runs whenever code in the `GitFleet/models/` or `GitFleet/providers/` directories is changed
+1. Runs whenever code in the `gitbench/models/` or `gitbench/providers/` directories is changed
 2. Builds the Rust extension with maturin
 3. Runs the Pydantic model validation tests
 4. Uses the `GH_API_TOKEN` secret for API authentication

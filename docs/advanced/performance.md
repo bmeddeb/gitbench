@@ -1,10 +1,10 @@
 # Performance Tips
 
-GitFleet is designed with performance in mind, leveraging Rust's speed and memory safety for core Git operations while providing a convenient Python interface. This guide provides tips and best practices for optimizing GitFleet's performance in your applications.
+gitbench is designed with performance in mind, leveraging Rust's speed and memory safety for core Git operations while providing a convenient Python interface. This guide provides tips and best practices for optimizing gitbench's performance in your applications.
 
 ## Performance Architecture
 
-GitFleet's performance architecture is built on several key components:
+gitbench's performance architecture is built on several key components:
 
 1. **Rust Implementation for Critical Operations**:
    - Repository cloning
@@ -24,7 +24,7 @@ GitFleet's performance architecture is built on several key components:
 
 ### Use Asynchronous APIs
 
-Always prefer asynchronous APIs when available. GitFleet's async functions leverage Rust's Tokio runtime for optimal performance:
+Always prefer asynchronous APIs when available. gitbench's async functions leverage Rust's Tokio runtime for optimal performance:
 
 ```python
 # Good: Using async/await
@@ -279,7 +279,7 @@ results = await measure_execution_time(
 
 ### Rust vs Python Implementation
 
-GitFleet implements performance-critical operations in Rust, while providing Python implementations for higher-level functionality:
+gitbench implements performance-critical operations in Rust, while providing Python implementations for higher-level functionality:
 
 **Rust-powered operations** (leverage these for best performance):
 - Repository cloning
@@ -306,5 +306,5 @@ file_content = await github_client.fetch_file_content("owner", "repo", "file.py"
 
 ## Related Topics
 
-- [Architecture Overview](../development/architecture.md) - Understanding GitFleet's performance architecture
+- [Architecture Overview](../development/architecture.md) - Understanding gitbench's performance architecture
 - [Python-Rust Bridge](../development/python-rust-bridge.md) - How the Rust and Python components interact

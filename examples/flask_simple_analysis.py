@@ -414,16 +414,40 @@ async def extract_commit_history(session_id):
                 monthly_commits = df.groupby('month').size().tail(6)
                 monthly_commits_dict = {str(k): int(v) for k, v in monthly_commits.items()}
                 
+                # Handle empty dataframes or missing date column correctly
+                min_date = None
+                max_date = None
+                
+                if 'date' in df.columns and not df['date'].empty:
+                    min_date = df['date'].min().isoformat()
+                    max_date = df['date'].max().isoformat()
+                
+                # Calculate totals safely
+                total_additions = 0
+                total_deletions = 0
+                
+                if 'additions' in df.columns and not df['additions'].empty:
+                    # Handle non-numeric values by converting to numeric and ignoring errors
+                    additions = pd.to_numeric(df['additions'], errors='coerce')
+                    total_additions = int(additions.sum())
+                
+                if 'deletions' in df.columns and not df['deletions'].empty:
+                    # Handle non-numeric values by converting to numeric and ignoring errors
+                    deletions = pd.to_numeric(df['deletions'], errors='coerce')
+                    total_deletions = int(deletions.sum())
+                
+                net_change = total_additions - total_deletions
+                
                 commit_stats = {
                     'count': len(df),
                     'date_range': {
-                        'min': df['date'].min().isoformat() if not df['date'].empty else None,
-                        'max': df['date'].max().isoformat() if not df['date'].empty else None
+                        'min': min_date,
+                        'max': max_date
                     },
                     'authors': df['author_name'].value_counts().head(10).to_dict(),
-                    'total_additions': int(df['additions'].sum()),
-                    'total_deletions': int(df['deletions'].sum()),
-                    'net_change': int(df['additions'].sum() - df['deletions'].sum()),
+                    'total_additions': total_additions,
+                    'total_deletions': total_deletions,
+                    'net_change': net_change,
                     'commits_by_month': monthly_commits_dict,
                     'performance': {
                         'duration_seconds': duration,
@@ -432,10 +456,36 @@ async def extract_commit_history(session_id):
                     }
                 }
             else:
+                # Calculate totals manually if pandas isn't available
+                total_additions = 0
+                total_deletions = 0
+                
+                for commit in commits:
+                    try:
+                        if 'additions' in commit and commit['additions'] is not None:
+                            # Convert to integer if it's not already
+                            additions = int(commit['additions'])
+                            total_additions += additions
+                    except (ValueError, TypeError):
+                        # Skip if value cannot be converted to int
+                        pass
+                        
+                    try:
+                        if 'deletions' in commit and commit['deletions'] is not None:
+                            # Convert to integer if it's not already
+                            deletions = int(commit['deletions'])
+                            total_deletions += deletions
+                    except (ValueError, TypeError):
+                        # Skip if value cannot be converted to int
+                        pass
+                
                 # Basic stats without pandas
                 commit_stats = {
                     'count': len(commits),
                     'recent_commits': commits[:10],
+                    'total_additions': total_additions,
+                    'total_deletions': total_deletions,
+                    'net_change': total_additions - total_deletions,
                     'performance': {
                         'duration_seconds': duration,
                         'duration_formatted': format_duration(duration)
@@ -1288,9 +1338,15 @@ with open(os.path.join(templates_dir, 'index.html'), 'w') as f:
             document.getElementById('linesDeleted').textContent = commits.total_deletions || 0;
             document.getElementById('netChange').textContent = commits.net_change || 0;
             
+            // Update date range with proper handling for missing values
             if (commits.date_range) {
-                document.getElementById('commitDateRange').textContent = 
-                    `${commits.date_range.min || 'N/A'} to ${commits.date_range.max || 'N/A'}`;
+                const minDate = commits.date_range.min || 'N/A';
+                const maxDate = commits.date_range.max || 'N/A';
+                const dateRangeText = (minDate === 'N/A' || maxDate === 'N/A') ? 
+                    'N/A' : `${minDate} to ${maxDate}`;
+                document.getElementById('commitDateRange').textContent = dateRangeText;
+            } else {
+                document.getElementById('commitDateRange').textContent = 'N/A';
             }
             
             // Populate top contributors table

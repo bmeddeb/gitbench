@@ -1,6 +1,6 @@
 # Token Management
 
-GitFleet includes a built-in token management system that helps you handle API rate limits and authentication across multiple tokens. This is especially useful for high-volume applications that need to maximize their API usage.
+gitbench includes a built-in token management system that helps you handle API rate limits and authentication across multiple tokens. This is especially useful for high-volume applications that need to maximize their API usage.
 
 ## Why Token Management?
 
@@ -15,12 +15,12 @@ Using multiple tokens allows you to:
 
 ## Built-in TokenManager
 
-GitFleet provides a `TokenManager` class that automatically handles token rotation, rate limit tracking, and fallback logic:
+gitbench provides a `TokenManager` class that automatically handles token rotation, rate limit tracking, and fallback logic:
 
 ```python
 import asyncio
-from GitFleet import GitHubClient
-from GitFleet.providers import TokenManager, ProviderType
+from gitbench import GitHubClient
+from gitbench.providers import TokenManager, ProviderType
 
 # Create a token manager
 token_manager = TokenManager()
@@ -68,7 +68,7 @@ The token manager automatically:
 You can register tokens for different providers:
 
 ```python
-from GitFleet.providers import TokenManager, ProviderType
+from gitbench.providers import TokenManager, ProviderType
 
 # Create a token manager
 token_manager = TokenManager()
@@ -90,8 +90,8 @@ For simple cases, you can also manually handle tokens:
 
 ```python
 import asyncio
-from GitFleet import GitHubClient
-from GitFleet.providers.base import RateLimitError
+from gitbench import GitHubClient
+from gitbench.providers.base import RateLimitError
 
 # Initialize clients with different tokens
 github1 = GitHubClient(token="token1")
@@ -119,7 +119,7 @@ print(f"Remaining: {rate_limit.remaining}/{rate_limit.limit}")
 print(f"Reset time: {rate_limit.reset_time}")
 
 # Check all tokens in a token manager
-from GitFleet.providers import TokenManager, ProviderType
+from gitbench.providers import TokenManager, ProviderType
 
 token_manager = TokenManager()
 token_manager.add_token("token1", ProviderType.GITHUB)
@@ -199,8 +199,8 @@ Here's a complete example using the token manager with multiple tokens from envi
 ```python
 import os
 import asyncio
-from GitFleet import GitHubClient
-from GitFleet.providers import TokenManager, ProviderType
+from gitbench import GitHubClient
+from gitbench.providers import TokenManager, ProviderType
 
 async def main():
     # Get tokens from environment (comma-separated)
@@ -255,7 +255,7 @@ if __name__ == "__main__":
 
 1. **Store tokens securely**: Never hard-code tokens in your source code. Use environment variables or secure secret management.
 
-2. **Use the built-in TokenManager**: Let GitFleet handle token rotation and rate limiting automatically.
+2. **Use the built-in TokenManager**: Let gitbench handle token rotation and rate limiting automatically.
 
 3. **Handle rate limit errors**: Always catch `RateLimitError` exceptions and implement appropriate fallback logic.
 
@@ -267,7 +267,7 @@ if __name__ == "__main__":
 import asyncio
 import time
 import random
-from GitFleet.providers.base import RateLimitError
+from gitbench.providers.base import RateLimitError
 
 async def fetch_with_backoff(client, owner, max_retries=5):
     for attempt in range(max_retries):
@@ -289,8 +289,8 @@ For production applications, consider using environment variables or a secure cr
 
 ```python
 import os
-from GitFleet import GitHubClient
-from GitFleet.providers import TokenManager, ProviderType
+from gitbench import GitHubClient
+from gitbench.providers import TokenManager, ProviderType
 
 # Get tokens from environment variables
 token = os.environ.get("GITHUB_TOKEN")

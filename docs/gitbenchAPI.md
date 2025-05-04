@@ -272,6 +272,509 @@ Enum for Git provider types:
 - `GITLAB`: GitLab provider
 - `BITBUCKET`: BitBucket provider
 
+## Data Models
+
+### UserInfo
+
+User information from Git providers.
+
+**Properties:**
+- `id`: User ID
+- `login`: Username
+- `name`: Display name
+- `email`: Email address
+- `avatar_url`: URL to user avatar
+- `provider_type`: Provider type from `ProviderType` enum
+- `raw_data`: Raw API response data
+
+**Methods:**
+
+#### `model_dump()`
+```python
+def model_dump() -> Dict[str, Any]
+```
+Serialize to dictionary.
+
+#### `model_dump_json()`
+```python
+def model_dump_json(indent: Optional[int] = None) -> str
+```
+Serialize to JSON.
+
+**Parameters:**
+- `indent`: Optional indentation level for JSON formatting
+
+#### `model_validate()`
+```python
+@classmethod
+def model_validate(cls, obj: Any) -> UserInfo
+```
+Create from dictionary/object.
+
+### RepoInfo
+
+Basic repository information.
+
+**Properties:**
+- `name`: Repository name
+- `full_name`: Full repository name (owner/name)
+- `clone_url`: URL for cloning the repository
+- `description`: Repository description
+- `default_branch`: Default branch name
+- `created_at`: Creation timestamp
+- `updated_at`: Last update timestamp
+- `language`: Primary language
+- `fork`: Whether the repository is a fork
+- `forks_count`: Number of forks
+- `stargazers_count`: Number of stars
+- `provider_type`: Provider type from `ProviderType` enum
+- `visibility`: Repository visibility (public/private)
+- `owner`: Repository owner information
+- `raw_data`: Raw API response data
+
+**Methods:**
+
+#### `created_datetime()`
+```python
+def created_datetime() -> Optional[datetime]
+```
+Parse `created_at` as datetime.
+
+**Returns:** Datetime object or None
+
+#### `updated_datetime()`
+```python
+def updated_datetime() -> Optional[datetime]
+```
+Parse `updated_at` as datetime.
+
+**Returns:** Datetime object or None
+
+#### `model_dump()`
+```python
+def model_dump() -> Dict[str, Any]
+```
+Serialize to dictionary.
+
+#### `model_dump_json()`
+```python
+def model_dump_json(indent: Optional[int] = None) -> str
+```
+Serialize to JSON.
+
+**Parameters:**
+- `indent`: Optional indentation level for JSON formatting
+
+#### `model_validate()`
+```python
+@classmethod
+def model_validate(cls, obj: Any) -> RepoInfo
+```
+Create from dictionary/object.
+
+### RepoDetails
+
+Detailed repository information (extends `RepoInfo`).
+
+**Additional Properties:**
+- `topics`: Repository topics/tags
+- `license`: Repository license
+- `homepage`: Repository homepage URL
+- `has_wiki`: Whether the repository has a wiki
+- `has_issues`: Whether the repository has issues enabled
+- `has_projects`: Whether the repository has projects enabled
+- `archived`: Whether the repository is archived
+- `pushed_at`: Last push timestamp
+- `size`: Repository size in KB
+
+**Additional Methods:**
+
+#### `pushed_datetime()`
+```python
+def pushed_datetime() -> Optional[datetime]
+```
+Parse `pushed_at` as datetime.
+
+**Returns:** Datetime object or None
+
+### RateLimitInfo
+
+API rate limit information.
+
+**Properties:**
+- `limit`: Total rate limit
+- `remaining`: Remaining API calls
+- `reset_time`: Timestamp when the rate limit resets
+- `used`: Number of API calls used
+- `provider_type`: Provider type from `ProviderType` enum
+
+**Methods:**
+
+#### `seconds_until_reset()`
+```python
+def seconds_until_reset() -> int
+```
+Get seconds until rate limit resets.
+
+**Returns:** Number of seconds
+
+#### `model_dump()`
+```python
+def model_dump() -> Dict[str, Any]
+```
+Serialize to dictionary.
+
+#### `model_dump_json()`
+```python
+def model_dump_json(indent: Optional[int] = None) -> str
+```
+Serialize to JSON.
+
+**Parameters:**
+- `indent`: Optional indentation level for JSON formatting
+
+#### `model_validate()`
+```python
+@classmethod
+def model_validate(cls, obj: Any) -> RateLimitInfo
+```
+Create from dictionary/object.
+
+### BranchInfo
+
+Git branch information.
+
+**Properties:**
+- `name`: Branch name
+- `commit_sha`: SHA of the branch's HEAD commit
+- `protected`: Whether the branch is protected
+- `provider_type`: Provider type from `ProviderType` enum
+- `raw_data`: Raw API response data
+
+**Methods:**
+
+#### `model_dump()`
+```python
+def model_dump() -> Dict[str, Any]
+```
+Serialize to dictionary.
+
+#### `model_dump_json()`
+```python
+def model_dump_json(indent: Optional[int] = None) -> str
+```
+Serialize to JSON.
+
+**Parameters:**
+- `indent`: Optional indentation level for JSON formatting
+
+#### `model_validate()`
+```python
+@classmethod
+def model_validate(cls, obj: Any) -> BranchInfo
+```
+Create from dictionary/object.
+
+### ContributorInfo
+
+Repository contributor information.
+
+**Properties:**
+- `id`: Contributor ID
+- `login`: Contributor username
+- `contributions`: Number of contributions
+- `avatar_url`: URL to contributor avatar
+- `provider_type`: Provider type from `ProviderType` enum
+- `raw_data`: Raw API response data
+
+**Methods:**
+
+#### `model_dump()`
+```python
+def model_dump() -> Dict[str, Any]
+```
+Serialize to dictionary.
+
+#### `model_dump_json()`
+```python
+def model_dump_json(indent: Optional[int] = None) -> str
+```
+Serialize to JSON.
+
+**Parameters:**
+- `indent`: Optional indentation level for JSON formatting
+
+#### `model_validate()`
+```python
+@classmethod
+def model_validate(cls, obj: Any) -> ContributorInfo
+```
+Create from dictionary/object.
+
+## Token Management
+
+### TokenManager
+
+Manages API tokens and rate limits.
+
+```python
+TokenManager()
+```
+
+**Methods:**
+
+#### `add_token()`
+```python
+def add_token(token: str, provider_type: ProviderType) -> None
+```
+Add token to the manager.
+
+**Parameters:**
+- `token`: API token
+- `provider_type`: Provider type from `ProviderType` enum
+
+#### `get_next_available_token()`
+```python
+async def get_next_available_token(provider_type: ProviderType) -> Optional[TokenInfo]
+```
+Get available token for the specified provider.
+
+**Parameters:**
+- `provider_type`: Provider type from `ProviderType` enum
+
+**Returns:** `TokenInfo` object or None if no tokens are available
+
+#### `update_rate_limit()`
+```python
+async def update_rate_limit(token: str, provider_type: ProviderType, 
+                           remaining: int, reset_time: int) -> None
+```
+Update rate limit information for a token.
+
+**Parameters:**
+- `token`: API token
+- `provider_type`: Provider type from `ProviderType` enum
+- `remaining`: Remaining API calls
+- `reset_time`: Timestamp when the rate limit resets
+
+#### `mark_token_invalid()`
+```python
+async def mark_token_invalid(token: str, provider_type: ProviderType) -> None
+```
+Mark a token as invalid (e.g., revoked or expired).
+
+**Parameters:**
+- `token`: API token
+- `provider_type`: Provider type from `ProviderType` enum
+
+#### `get_all_tokens()`
+```python
+def get_all_tokens(provider_type: Optional[ProviderType] = None) -> List[TokenInfo]
+```
+Get all tokens for a provider type or all tokens if no provider specified.
+
+**Parameters:**
+- `provider_type`: Optional provider type from `ProviderType` enum
+
+**Returns:** List of `TokenInfo` objects
+
+### TokenInfo
+
+Information about an API token.
+
+**Properties:**
+- `token`: Plain text token
+- `provider_type`: Provider type from `ProviderType` enum
+- `status`: Current token status
+- `secret_token`: Property that returns token as `SecretStr` for secure handling
+
+## Authentication and Security
+
+### CredentialManager
+
+Manages and securely stores credentials.
+
+```python
+CredentialManager(encryption_key: Optional[str] = None, use_encryption: bool = True)
+```
+
+**Parameters:**
+- `encryption_key`: Optional encryption key for securing credentials
+- `use_encryption`: Whether to encrypt stored credentials
+
+**Methods:**
+
+#### `add_credential()`
+```python
+def add_credential(provider_type: ProviderType, token: str, 
+                  username: Optional[str] = None, 
+                  email: Optional[str] = None) -> None
+```
+Add a credential to the manager.
+
+**Parameters:**
+- `provider_type`: Provider type from `ProviderType` enum
+- `token`: API token
+- `username`: Optional username
+- `email`: Optional email
+
+#### `get_credential()`
+```python
+def get_credential(provider_type: ProviderType) -> Optional[CredentialEntry]
+```
+Get credential for the specified provider.
+
+**Parameters:**
+- `provider_type`: Provider type from `ProviderType` enum
+
+**Returns:** `CredentialEntry` object or None if not found
+
+#### `list_credentials()`
+```python
+def list_credentials() -> List[CredentialEntry]
+```
+List all stored credentials.
+
+**Returns:** List of `CredentialEntry` objects
+
+#### `remove_credential()`
+```python
+def remove_credential(provider_type: ProviderType) -> bool
+```
+Remove credential for the specified provider.
+
+**Parameters:**
+- `provider_type`: Provider type from `ProviderType` enum
+
+**Returns:** Boolean indicating if a credential was removed
+
+#### `save_to_file()`
+```python
+def save_to_file(file_path: str) -> None
+```
+Save credentials to a file.
+
+**Parameters:**
+- `file_path`: Path to save credentials
+
+#### `load_from_file()`
+```python
+def load_from_file(file_path: str) -> None
+```
+Load credentials from a file.
+
+**Parameters:**
+- `file_path`: Path to load credentials from
+
+#### `clear_all()`
+```python
+def clear_all() -> None
+```
+Clear all stored credentials.
+
+## Utility Functions
+
+### Data Conversion
+
+#### `to_dataframe()`
+```python
+def to_dataframe(data: Union[List[Dict[str, Any]], Dict[str, Any], 
+                            List[Any], BaseModel, List[BaseModel]]) -> pandas.DataFrame
+```
+Convert various data types to a pandas DataFrame.
+
+**Parameters:**
+- `data`: Data to convert (list of objects, dictionary, or Pydantic models)
+
+**Returns:** pandas DataFrame
+
+#### `flatten_dataframe()`
+```python
+def flatten_dataframe(df: pandas.DataFrame, separator: str = "_") -> pandas.DataFrame
+```
+Flatten nested DataFrame columns.
+
+**Parameters:**
+- `df`: DataFrame to flatten
+- `separator`: Separator to use for nested column names
+
+**Returns:** Flattened pandas DataFrame
+
+#### `to_json()`
+```python
+def to_json(obj: Any, indent: Optional[int] = None) -> str
+```
+Convert object to JSON string.
+
+**Parameters:**
+- `obj`: Object to convert
+- `indent`: Optional indentation level for JSON formatting
+
+**Returns:** JSON string
+
+#### `to_dict()`
+```python
+def to_dict(obj: Any) -> Dict[str, Any]
+```
+Convert object to dictionary.
+
+**Parameters:**
+- `obj`: Object to convert
+
+**Returns:** Dictionary representation
+
+### Rate Limiting
+
+#### `RateLimiter`
+Class for rate limiting API calls.
+
+```python
+RateLimiter(requests_per_second: float)
+```
+
+**Parameters:**
+- `requests_per_second`: Maximum requests per second
+
+**Methods:**
+
+##### `acquire()`
+```python
+async def acquire() -> None
+```
+Acquire a token (blocks if rate exceeded).
+
+##### `try_acquire()`
+```python
+def try_acquire() -> bool
+```
+Try to acquire a token (non-blocking).
+
+**Returns:** Boolean indicating if token was acquired
+
+### Rust Type Conversion
+
+#### `clone_status_to_pydantic()`
+```python
+def clone_status_to_pydantic(rust_status: RustCloneStatus) -> CloneStatus
+```
+Convert Rust `CloneStatus` to Pydantic model.
+
+**Parameters:**
+- `rust_status`: Rust `CloneStatus` object
+
+**Returns:** Pydantic `CloneStatus` model
+
+#### `clone_task_to_pydantic()`
+```python
+def clone_task_to_pydantic(rust_task: RustCloneTask) -> CloneTask
+```
+Convert Rust `CloneTask` to Pydantic model.
+
+**Parameters:**
+- `rust_task`: Rust `CloneTask` object
+
+**Returns:** Pydantic `CloneTask` model
+
 ## Package Structure
 
 The library is organized into several subpackages:

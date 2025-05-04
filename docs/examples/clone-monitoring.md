@@ -1,15 +1,15 @@
 # Clone Monitoring Example
 
-This example demonstrates how to clone repositories and monitor their cloning progress in real-time using GitFleet. It includes a fancy terminal display with progress bars, status indicators, and estimated completion times.
+This example demonstrates how to clone repositories and monitor their cloning progress in real-time using gitbench. It includes a fancy terminal display with progress bars, status indicators, and estimated completion times.
 
 ## Code Example
 
 ```python
 #!/usr/bin/env python3
 """
-GitFleet Clone Monitoring Example
+gitbench Clone Monitoring Example
 
-This example demonstrates how to use the GitFleet library to:
+This example demonstrates how to use the gitbench library to:
 1. Initialize a repository manager
 2. Clone repositories
 3. Monitor cloning progress with detailed status updates
@@ -23,7 +23,7 @@ import asyncio
 import os
 from datetime import datetime
 
-from GitFleet import RepoManager
+from gitbench import RepoManager
 
 # ANSI color codes for terminal output
 COLORS = {
@@ -195,7 +195,7 @@ async def main():
         default=[
             "https://github.com/bmeddeb/gradelib",
             "https://github.com/bmeddeb/SER402-Team3",
-            "https://github.com/bmeddeb/GitFleet",
+            "https://github.com/bmeddeb/gitbench",
         ],
         help="List of repository URLs to clone",
     )
@@ -275,7 +275,7 @@ if __name__ == "__main__":
 
 ## Key Features Demonstrated
 
-This example demonstrates several key features of GitFleet's clone monitoring capabilities:
+This example demonstrates several key features of gitbench's clone monitoring capabilities:
 
 1. **Asynchronous Cloning**: Non-blocking clone operations that run in parallel
 2. **Real-time Status Updates**: Monitoring clone progress with detailed status information
@@ -288,9 +288,9 @@ This example demonstrates several key features of GitFleet's clone monitoring ca
 
 To run this example:
 
-1. Install GitFleet:
+1. Install gitbench:
    ```bash
-   pip install gitfleet
+   pip install gitbench
    ```
 
 2. Optionally set GitHub credentials as environment variables:
@@ -313,14 +313,14 @@ To run this example:
 
 ### Clone Status Monitoring
 
-GitFleet provides detailed status information for clone operations. Each clone task can have one of the following status types:
+gitbench provides detailed status information for clone operations. Each clone task can have one of the following status types:
 
 - **queued**: The repository is waiting to be cloned
 - **cloning**: The repository is currently being cloned
 - **completed**: The clone operation completed successfully
 - **failed**: The clone operation failed (with error details)
 
-For repositories in the "cloning" state, GitFleet provides progress information as a percentage.
+For repositories in the "cloning" state, gitbench provides progress information as a percentage.
 
 ### The Monitor Function
 
@@ -350,5 +350,5 @@ The example includes accommodations for different operating systems:
 
 ## Related Examples
 
-- [Basic Usage](basic-usage.md): Simpler example of GitFleet's core functionality
+- [Basic Usage](basic-usage.md): Simpler example of gitbench's core functionality
 - [GitHub Client](github-client.md): Working with the GitHub API client

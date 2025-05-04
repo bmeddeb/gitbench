@@ -1,6 +1,6 @@
 # CloneStatus
 
-In GitFleet, there are two types of `CloneStatus` objects that represent the status of repository cloning operations:
+In gitbench, there are two types of `CloneStatus` objects that represent the status of repository cloning operations:
 
 1. **RustCloneStatus**: The native Rust implementation returned by `RepoManager.fetch_clone_tasks()`
 2. **PydanticCloneStatus**: A Pydantic model version with additional validation and serialization features
@@ -27,7 +27,7 @@ You will most often encounter `CloneStatus` as part of a `CloneTask` when checki
 
 ```python
 import asyncio
-from GitFleet import RepoManager
+from gitbench import RepoManager
 
 async def main():
     urls = ["https://github.com/owner/repo1.git"]
@@ -50,7 +50,7 @@ asyncio.run(main())
 
 ```python
 import asyncio
-from GitFleet import RepoManager, to_pydantic_status
+from gitbench import RepoManager, to_pydantic_status
 
 async def main():
     urls = ["https://github.com/owner/repo1.git"]

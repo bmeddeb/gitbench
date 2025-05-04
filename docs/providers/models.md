@@ -1,6 +1,6 @@
 # Provider Data Models
 
-GitFleet uses standardized data models across all Git provider APIs. These models provide consistent data structures regardless of which provider (GitHub, GitLab, BitBucket) you are working with.
+gitbench uses standardized data models across all Git provider APIs. These models provide consistent data structures regardless of which provider (GitHub, GitLab, BitBucket) you are working with.
 
 ## Core Data Models
 
@@ -142,7 +142,7 @@ All models can be converted to pandas DataFrames for data analysis:
 
 ```python
 # Import pandas converter
-from GitFleet import to_dataframe
+from gitbench import to_dataframe
 
 # Get repositories for a user
 repos = await github.fetch_repositories("octocat")
@@ -182,7 +182,7 @@ if repo.raw_data and "allow_forking" in repo.raw_data:
 When working with provider models, you may encounter provider-specific errors:
 
 ```python
-from GitFleet.providers.base import ProviderError, AuthError, RateLimitError
+from gitbench.providers.base import ProviderError, AuthError, RateLimitError
 
 try:
     repos = await github.fetch_repositories("octocat")
@@ -199,7 +199,7 @@ except ProviderError as e:
 The `ProviderType` enumeration is used to identify which provider a model belongs to:
 
 ```python
-from GitFleet.providers import ProviderType
+from gitbench.providers import ProviderType
 
 # Check the provider type
 repos = await github.fetch_repositories("octocat")
