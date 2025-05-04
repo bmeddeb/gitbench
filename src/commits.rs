@@ -1,3 +1,5 @@
+// commits.rs
+// This module provides functionality to extract commit history information from a cloned Git repository.
 use git2::{Commit, DiffOptions, Oid, Repository, Sort};
 use rayon::prelude::*;
 use std::path::{Path, PathBuf}; // Import Rayon traits

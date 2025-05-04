@@ -1,3 +1,4 @@
+// src/repo.rs
 use futures::future::join_all;
 use git2::{Cred, FetchOptions, Progress, RemoteCallbacks};
 use lazy_static::lazy_static;
@@ -152,7 +153,7 @@ impl InternalRepoManagerLogic {
                     Err(e) => Err(e.to_string()),
                 }
             })
-                .await;
+            .await;
         let ret = match result {
             Ok(Ok(path)) => {
                 self.update_status(&url_clone, InternalCloneStatus::Cloning(100))
@@ -170,7 +171,7 @@ impl InternalRepoManagerLogic {
                     &url_clone,
                     InternalCloneStatus::Failed(format!("Cloning task failed: {}", join_err)),
                 )
-                    .await;
+                .await;
                 Err(format!("Cloning task failed: {}", join_err))
             }
         };

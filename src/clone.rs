@@ -1,3 +1,4 @@
+// src/clone.rs
 use std::path::PathBuf;
 
 /// Internal representation of the status of a cloning operation.

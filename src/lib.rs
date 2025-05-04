@@ -1,3 +1,4 @@
+// src/lib.rs
 #![allow(dead_code, non_snake_case)]
 
 use pyo3::prelude::*;
@@ -202,8 +203,8 @@ impl RepoManager {
             let result_vec = ::tokio::task::spawn_blocking(move || {
                 inner.extract_commits(&PathBuf::from(repo_path_clone))
             })
-                .await
-                .unwrap_or_else(|e| Err(format!("Task execution failed: {}", e)));
+            .await
+            .unwrap_or_else(|e| Err(format!("Task execution failed: {}", e)));
             Python::with_gil(|py| -> PyResult<Py<PyAny>> {
                 match result_vec {
                     Ok(commit_infos) => {
